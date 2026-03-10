@@ -9,7 +9,7 @@
             <div style="flex:1"></div>
         </hlayout>
 
-        <vlayout width="100%" style="padding:16px;box-sizing:border-box;">
+        <vlayout width="100%" style="padding:16px;box-sizing:border-box;overflow:hidden;">
             <label value="Inward Request" style="font-size:18px;font-weight:bold;margin-bottom:16px;"/>
 
             <!-- Toggle buttons -->
@@ -18,9 +18,11 @@
                 <button id="btnScanned" label="Scanned Data" style="padding:8px 16px;background:#95a5a6;color:white;border:none;border-radius:4px;cursor:pointer;" />
             </hlayout>
 
-            <!-- Requested Data Grid -->
-            <div id="requestedContainer" style="background:white;border:1px solid #ddd;border-radius:4px;overflow:auto;">
-                <grid width="100%" mold="paging" pageSize="10" style="background:white;">
+            <!-- Container for both tables - using native HTML structure -->
+            <vlayout id="tableContainer" width="100%" style="background:white;border:1px solid #ddd;border-radius:4px;overflow:auto;">
+                
+                <!-- Requested Data Grid -->
+                <grid id="requestedGrid" width="100%" mold="paging" pageSize="10" style="background:white;">
                     <columns>
                         <column label="SQ" width="60px" align="center"/>
                         <column label="Code" width="150px"/>
@@ -87,11 +89,9 @@
                         </row>
                     </rows>
                 </grid>
-            </div>
 
-            <!-- Scanned Data Grid (hidden by default) -->
-            <div id="scannedContainer" style="display:none;background:white;border:1px solid #ddd;border-radius:4px;overflow:auto;">
-                <grid width="100%" mold="paging" pageSize="10" style="background:white;">
+                <!-- Scanned Data Grid (hidden by default) -->
+                <grid id="scannedGrid" width="100%" mold="paging" pageSize="10" style="background:white;display:none;">
                     <columns>
                         <column label="SQ" width="60px" align="center"/>
                         <column label="ENO" width="100px"/>
@@ -158,57 +158,167 @@
                         </row>
                     </rows>
                 </grid>
-            </div>
+
+            </vlayout>
 
         </vlayout>
 
-        <script type="text/javascript">
+        <script>
         <![CDATA[
-            // Toggle between Requested and Scanned views
+            // Toggle to show Requested Data table
             function toggleRequested() {
-                var reqContainer = document.getElementById('requestedContainer');
-                var scnContainer = document.getElementById('scannedContainer');
-                var btnReq = document.getElementById('btnRequested');
-                var btnScn = document.getElementById('btnScanned');
-
-                reqContainer.style.display = '';
-                scnContainer.style.display = 'none';
+                console.log("===== toggleRequested called =====");
                 
-                btnReq.style.background = '#3498db';
-                btnReq.style.fontWeight = 'bold';
-                btnScn.style.background = '#95a5a6';
-                btnScn.style.fontWeight = 'normal';
+                // Use ZK Widget API to get grid widgets
+                var requestedGridWidget = zk.Widget.$('$requestedGrid');
+                var scannedGridWidget = zk.Widget.$('$scannedGrid');
+                
+                console.log("requestedGridWidget found:", !!requestedGridWidget);
+                console.log("scannedGridWidget found:", !!scannedGridWidget);
+
+                // Show Requested, Hide Scanned
+                if (requestedGridWidget) {
+                    var requestedGridDom = requestedGridWidget.$n();
+                    if (requestedGridDom) {
+                        requestedGridDom.style.display = '';
+                        console.log("✓ Set requestedGrid display = ''");
+                    }
+                }
+                
+                if (scannedGridWidget) {
+                    var scannedGridDom = scannedGridWidget.$n();
+                    if (scannedGridDom) {
+                        scannedGridDom.style.display = 'none';
+                        console.log("✓ Set scannedGrid display = 'none'");
+                    }
+                }
+                
+                // Update button styles
+                updateButtonStyles(true); // true = Requested is active
             }
 
+            // Toggle to show Scanned Data table
             function toggleScanned() {
-                var reqContainer = document.getElementById('requestedContainer');
-                var scnContainer = document.getElementById('scannedContainer');
-                var btnReq = document.getElementById('btnRequested');
-                var btnScn = document.getElementById('btnScanned');
-
-                reqContainer.style.display = 'none';
-                scnContainer.style.display = '';
+                console.log("===== toggleScanned called =====");
                 
-                btnReq.style.background = '#95a5a6';
-                btnReq.style.fontWeight = 'normal';
-                btnScn.style.background = '#3498db';
-                btnScn.style.fontWeight = 'bold';
+                // Use ZK Widget API to get grid widgets
+                var requestedGridWidget = zk.Widget.$('$requestedGrid');
+                var scannedGridWidget = zk.Widget.$('$scannedGrid');
+                
+                console.log("requestedGridWidget found:", !!requestedGridWidget);
+                console.log("scannedGridWidget found:", !!scannedGridWidget);
+
+                // Hide Requested, Show Scanned
+                if (requestedGridWidget) {
+                    var requestedGridDom = requestedGridWidget.$n();
+                    if (requestedGridDom) {
+                        requestedGridDom.style.display = 'none';
+                        console.log("✓ Set requestedGrid display = 'none'");
+                    }
+                }
+                
+                if (scannedGridWidget) {
+                    var scannedGridDom = scannedGridWidget.$n();
+                    if (scannedGridDom) {
+                        scannedGridDom.style.display = '';
+                        console.log("✓ Set scannedGrid display = ''");
+                    }
+                }
+                
+                // Update button styles
+                updateButtonStyles(false); // false = Scanned is active
             }
 
-            // Wire button click handlers
+            // Update button styles
+            function updateButtonStyles(isRequestedActive) {
+                var btnReqWidget = zk.Widget.$('$btnRequested');
+                var btnScnWidget = zk.Widget.$('$btnScanned');
+
+                if (btnReqWidget) {
+                    var btnReqDom = btnReqWidget.$n();
+                    if (btnReqDom) {
+                        if (isRequestedActive) {
+                            btnReqDom.style.background = '#3498db';
+                            btnReqDom.style.fontWeight = 'bold';
+                            console.log("✓ btnRequested = ACTIVE (blue)");
+                        } else {
+                            btnReqDom.style.background = '#95a5a6';
+                            btnReqDom.style.fontWeight = 'normal';
+                            console.log("✓ btnRequested = INACTIVE (gray)");
+                        }
+                    }
+                }
+
+                if (btnScnWidget) {
+                    var btnScnDom = btnScnWidget.$n();
+                    if (btnScnDom) {
+                        if (!isRequestedActive) {
+                            btnScnDom.style.background = '#3498db';
+                            btnScnDom.style.fontWeight = 'bold';
+                            console.log("✓ btnScanned = ACTIVE (blue)");
+                        } else {
+                            btnScnDom.style.background = '#95a5a6';
+                            btnScnDom.style.fontWeight = 'normal';
+                            console.log("✓ btnScanned = INACTIVE (gray)");
+                        }
+                    }
+                }
+            }
+
+            // Wire button handlers on page load
             zk.afterMount(function() {
-                var btnReq = document.getElementById('btnRequested');
-                var btnScn = document.getElementById('btnScanned');
+                console.log("========================================");
+                console.log("zk.afterMount called - initializing...");
+                console.log("========================================");
+                
+                // Get the widget objects for buttons
+                var btnReqWidget = zk.Widget.$('$btnRequested');
+                var btnScnWidget = zk.Widget.$('$btnScanned');
+
+                console.log("btnReqWidget found:", !!btnReqWidget);
+                console.log("btnScnWidget found:", !!btnScnWidget);
+
+                // Get the native button elements
+                var btnReqDom = btnReqWidget ? btnReqWidget.$n() : null;
+                var btnScnDom = btnScnWidget ? btnScnWidget.$n() : null;
+
+                console.log("btnReqDom found:", !!btnReqDom);
+                console.log("btnScnDom found:", !!btnScnDom);
+
+                // Attach click handlers
+                if (btnReqDom) {
+                    btnReqDom.addEventListener('click', function(e) {
+                        console.log(">>> btnRequested clicked!");
+                        toggleRequested();
+                    });
+                    console.log("✓ Click handler attached to btnRequested");
+                } else {
+                    console.error("✗ btnReqDom is null/undefined");
+                }
+
+                if (btnScnDom) {
+                    btnScnDom.addEventListener('click', function(e) {
+                        console.log(">>> btnScanned clicked!");
+                        toggleScanned();
+                    });
+                    console.log("✓ Click handler attached to btnScanned");
+                } else {
+                    console.error("✗ btnScnDom is null/undefined");
+                }
+
+                // Hamburger button
                 var btnHam = document.getElementById('hamburger');
+                if (btnHam) {
+                    btnHam.addEventListener('click', function() {
+                        alert('Hamburger menu — items coming soon!');
+                    });
+                    console.log("✓ Click handler attached to hamburger");
+                }
 
-                if (btnReq) btnReq.addEventListener('click', toggleRequested);
-                if (btnScn) btnScn.addEventListener('click', toggleScanned);
-                if (btnHam) btnHam.addEventListener('click', function() {
-                    alert('Hamburger menu — items coming soon!');
-                });
-
-                // Show requested by default
+                // Show requested data by default
+                console.log("Setting initial view to Requested Data...");
                 toggleRequested();
+                console.log("========================================\n");
             });
         ]]>
         </script>
