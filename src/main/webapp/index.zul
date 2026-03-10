@@ -1,0 +1,10 @@
+<zk>
+    <window title="Git ZUL Test" border="normal" width="400px">
+
+        <label value="Hello World" />
+
+        <button label="Show Hello"
+                onClick='alert("Hello World!")'/>
+
+    </window>
+</zk>
