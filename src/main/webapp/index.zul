@@ -1,10 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <zk>
-    <window title="Git ZUL Test" border="normal" width="400px">
+    <window title="Inward Request" border="normal" width="100%" height="100%">
 
-        <label value="Hello World" />
+        <!-- Header with hamburger menu -->
+        <hlayout width="100%" style="background:#2c3e50;color:white;padding:10px;align-items:center;">
+            <button id="hamburger" label="☰" style="background:#2c3e50;color:white;border:none;font-size:20px;cursor:pointer;" />
+            <label value="Inward Request" style="font-weight:bold;margin-left:12px;color:white;"/>
+            <div style="flex:1"></div>
+        </hlayout>
 
-        <button label="Show Hello"
-                onClick='alert("Hello World!")'/>
+        <vlayout width="100%" style="padding:16px;box-sizing:border-box;">
+            <label value="Inward Request" style="font-size:18px;font-weight:bold;margin-bottom:16px;"/>
+
+            <!-- Toggle buttons -->
+            <hlayout spacing="8px" style="margin-bottom:16px;">
+                <button id="btnRequested" label="Requested Data" style="padding:8px 16px;background:#3498db;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:bold;" />
+                <button id="btnScanned" label="Scanned Data" style="padding:8px 16px;background:#95a5a6;color:white;border:none;border-radius:4px;cursor:pointer;" />
+            </hlayout>
+
+            <!-- Requested Data Grid -->
+            <div id="requestedContainer" style="background:white;border:1px solid #ddd;border-radius:4px;overflow:auto;">
+                <grid width="100%" mold="paging" pageSize="10" style="background:white;">
+                    <columns>
+                        <column label="SQ" width="60px" align="center"/>
+                        <column label="Code" width="150px"/>
+                        <column label="Name" width="*"/>
+                        <column label="MRP" width="120px" align="right"/>
+                        <column label="Stock" width="120px" align="right"/>
+                    </columns>
+                    <rows>
+                        <row>
+                            <label value="1"/>
+                            <label value="C001"/>
+                            <label value="Sample Item A"/>
+                            <label value="100.00"/>
+                            <label value="20"/>
+                        </row>
+                        <row>
+                            <label value="2"/>
+                            <label value="C002"/>
+                            <label value="Sample Item B"/>
+                            <label value="250.00"/>
+                            <label value="5"/>
+                        </row>
+                        <row>
+                            <label value="3"/>
+                            <label value="C003"/>
+                            <label value="Sample Item C"/>
+                            <label value="75.50"/>
+                            <label value="100"/>
+                        </row>
+                        <row>
+                            <label value="4"/>
+                            <label value="C004"/>
+                            <label value="Extra Item D"/>
+                            <label value="45.00"/>
+                            <label value="0"/>
+                        </row>
+                        <row>
+                            <label value="5"/>
+                            <label value="C005"/>
+                            <label value="Extra Item E"/>
+                            <label value="150.25"/>
+                            <label value="8"/>
+                        </row>
+                        <row>
+                            <label value="6"/>
+                            <label value="C006"/>
+                            <label value="Bulk Item F"/>
+                            <label value="9.99"/>
+                            <label value="500"/>
+                        </row>
+                        <row>
+                            <label value="7"/>
+                            <label value="C007"/>
+                            <label value="Limited Item G"/>
+                            <label value="999.99"/>
+                            <label value="1"/>
+                        </row>
+                        <row>
+                            <label value="8"/>
+                            <label value="C008"/>
+                            <label value="Clearance Item H"/>
+                            <label value="5.50"/>
+                            <label value="200"/>
+                        </row>
+                    </rows>
+                </grid>
+            </div>
+
+            <!-- Scanned Data Grid (hidden by default) -->
+            <div id="scannedContainer" style="display:none;background:white;border:1px solid #ddd;border-radius:4px;overflow:auto;">
+                <grid width="100%" mold="paging" pageSize="10" style="background:white;">
+                    <columns>
+                        <column label="SQ" width="60px" align="center"/>
+                        <column label="ENO" width="100px"/>
+                        <column label="SKU" width="150px"/>
+                        <column label="Code" width="150px"/>
+                        <column label="Name" width="*"/>
+                        <column label="MRP" width="120px" align="right"/>
+                        <column label="Stock" width="120px" align="right"/>
+                    </columns>
+                    <rows>
+                        <row>
+                            <label value="1"/>
+                            <label value="E100"/>
+                            <label value="S-001"/>
+                            <label value="C001"/>
+                            <label value="Sample Item A"/>
+                            <label value="100.00"/>
+                            <label value="20"/>
+                        </row>
+                        <row>
+                            <label value="2"/>
+                            <label value="E101"/>
+                            <label value="S-002"/>
+                            <label value="C002"/>
+                            <label value="Sample Item B"/>
+                            <label value="250.00"/>
+                            <label value="5"/>
+                        </row>
+                        <row>
+                            <label value="3"/>
+                            <label value="E102"/>
+                            <label value="S-003"/>
+                            <label value="C003"/>
+                            <label value="Sample Item C"/>
+                            <label value="75.50"/>
+                            <label value="100"/>
+                        </row>
+                        <row>
+                            <label value="4"/>
+                            <label value="E103"/>
+                            <label value="S-004"/>
+                            <label value="C004"/>
+                            <label value="Extra Item D"/>
+                            <label value="45.00"/>
+                            <label value="0"/>
+                        </row>
+                        <row>
+                            <label value="5"/>
+                            <label value="E104"/>
+                            <label value="S-005"/>
+                            <label value="C005"/>
+                            <label value="Extra Item E"/>
+                            <label value="150.25"/>
+                            <label value="8"/>
+                        </row>
+                        <row>
+                            <label value="6"/>
+                            <label value="E105"/>
+                            <label value="S-006"/>
+                            <label value="C006"/>
+                            <label value="Bulk Item F"/>
+                            <label value="9.99"/>
+                            <label value="500"/>
+                        </row>
+                    </rows>
+                </grid>
+            </div>
+
+        </vlayout>
+
+        <script type="text/javascript">
+        <![CDATA[
+            // Toggle between Requested and Scanned views
+            function toggleRequested() {
+                var reqContainer = document.getElementById('requestedContainer');
+                var scnContainer = document.getElementById('scannedContainer');
+                var btnReq = document.getElementById('btnRequested');
+                var btnScn = document.getElementById('btnScanned');
+
+                reqContainer.style.display = '';
+                scnContainer.style.display = 'none';
+                
+                btnReq.style.background = '#3498db';
+                btnReq.style.fontWeight = 'bold';
+                btnScn.style.background = '#95a5a6';
+                btnScn.style.fontWeight = 'normal';
+            }
+
+            function toggleScanned() {
+                var reqContainer = document.getElementById('requestedContainer');
+                var scnContainer = document.getElementById('scannedContainer');
+                var btnReq = document.getElementById('btnRequested');
+                var btnScn = document.getElementById('btnScanned');
+
+                reqContainer.style.display = 'none';
+                scnContainer.style.display = '';
+                
+                btnReq.style.background = '#95a5a6';
+                btnReq.style.fontWeight = 'normal';
+                btnScn.style.background = '#3498db';
+                btnScn.style.fontWeight = 'bold';
+            }
+
+            // Wire button click handlers
+            zk.afterMount(function() {
+                var btnReq = document.getElementById('btnRequested');
+                var btnScn = document.getElementById('btnScanned');
+                var btnHam = document.getElementById('hamburger');
+
+                if (btnReq) btnReq.addEventListener('click', toggleRequested);
+                if (btnScn) btnScn.addEventListener('click', toggleScanned);
+                if (btnHam) btnHam.addEventListener('click', function() {
+                    alert('Hamburger menu — items coming soon!');
+                });
+
+                // Show requested by default
+                toggleRequested();
+            });
+        ]]>
+        </script>
 
     </window>
 </zk>
